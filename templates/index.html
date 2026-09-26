@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot - Classificação de Intenções</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🤖 Chatbot - Detector de Intenções</h1>
+            <p>Atividade 8: Identificação de "Cancelar", "Comprar" ou "Suporte"</p>
+        </header>
+
+        <section class="card">
+            <form method="POST">
+                <label for="texto">Digite a mensagem do usuário:</label>
+                <textarea id="texto" name="texto" rows="3" placeholder="Ex: Preciso cancelar minha assinatura urgentemente..." required></textarea>
+                <button type="submit">Identificar Intenção</button>
+            </form>
+        </section>
+
+        {% if resultado %}
+        <section class="card result">
+            <h2>Análise da Mensagem</h2>
+            <p><strong>Mensagem:</strong> "{{ resultado.texto }}"</p>
+            <p><strong>Intenção Detectada:</strong> <span class="badge">{{ resultado.intencao }}</span></p>
+            <p><strong>Lemas Reconhecidos pelo spaCy:</strong> <code>{{ resultado.lemmas | join(', ') }}</code></p>
+        </section>
+        {% endif %}
+
+        <section class="card">
+            <h2>Histórico de Atendimentos (Pandas/SQLite)</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Mensagem</th>
+                        <th>Intenção</th>
+                        <th>Lemas</th>
+                        <th>Data</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in historico %}
+                    <tr>
+                        <td>{{ item.id }}</td>
+                        <td>{{ item.texto }}</td>
+                        <td><span class="badge-small">{{ item.intencao }}</span></td>
+                        <td><code>{{ item.lemmas }}</code></td>
+                        <td>{{ item.data_criacao }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    </div>
+</body>
+</html>
