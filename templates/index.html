@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BankAI - Triagem de Solicitações</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="bg-blur blur-1"></div>
+    <div class="bg-blur blur-2"></div>
+
+    <div class="container">
+        <header class="app-header">
+            <div class="logo-area">
+                <div class="logo-icon">⚡</div>
+                <div>
+                    <h1>NEON<span>BANK</span> AI</h1>
+                    <p>Módulo Inteligente de Triagem e NLP</p>
+                </div>
+            </div>
+            <div class="status-badge">
+                <span class="status-dot"></span> PostgreSQL Active
+            </div>
+        </header>
+
+        <main class="grid-layout">
+            <section class="card glass-card">
+                <div class="card-header">
+                    <h2>Nova Solicitação</h2>
+                    <span class="subtext">Digite a mensagem recebida pelo canal do cliente</span>
+                </div>
+                <form method="POST">
+                    <div class="input-group">
+                        <textarea id="texto" name="texto" rows="4" placeholder="Ex.: Perdi meu cartão na rua e preciso bloquear agora mesmo..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary">
+                        <span>Analisar com spaCy</span>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </button>
+                </form>
+            </section>
+
+            {% if resultado %}
+            <section class="card glass-card result-card">
+                <div class="card-header">
+                    <h2>Resultado do Processamento</h2>
+                    <span class="subtext">Classificação automática por inteligência linguística</span>
+                </div>
+                
+                <div class="result-body">
+                    <div class="result-item">
+                        <span class="label">Intenção Identificada:</span>
+                        <div class="category-badge 
+                            {% if 'Bloqueio' in resultado.categoria %}badge-danger
+                            {% elif 'Boleto' in resultado.categoria %}badge-info
+                            {% elif 'Saldo' in resultado.categoria %}badge-success
+                            {% else %}badge-warning{% endif %}">
+                            {{ resultado.categoria }}
+                        </div>
+                    </div>
+
+                    <div class="result-item">
+                        <span class="label">Mensagem Original:</span>
+                        <p class="quoted-text">"{{ resultado.texto }}"</p>
+                    </div>
+
+                    <div class="result-item">
+                        <span class="label">Lemas Extraídos (spaCy NLP):</span>
+                        <div class="lemma-tags">
+                            {% for lemma in resultado.lemmas %}
+                            <span class="tag">{{ lemma }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </section>
+            {% endif %}
+        </main>
+
+        <section class="card glass-card history-section">
+            <div class="card-header">
+                <h2>Histórico de Registros (Neon Tech Cloud)</h2>
+                <span class="subtext">Últimas solicitações salvas e indexadas em tempo real</span>
+            </div>
+            
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#ID</th>
+                            <th>Solicitação do Cliente</th>
+                            <th>Categoria</th>
+                            <th>Lemas Processados</th>
+                            <th>Data/Hora</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in historico %}
+                        <tr>
+                            <td class="id-cell">#{{ item.id }}</td>
+                            <td class="text-cell">{{ item.texto }}</td>
+                            <td>
+                                <span class="badge-table 
+                                    {% if 'Bloqueio' in item.categoria %}badge-danger
+                                    {% elif 'Boleto' in item.categoria %}badge-info
+                                    {% elif 'Saldo' in item.categoria %}badge-success
+                                    {% else %}badge-warning{% endif %}">
+                                    {{ item.categoria }}
+                                </span>
+                            </td>
+                            <td><code class="code-box">{{ item.lemmas }}</code></td>
+                            <td class="date-cell">{{ item.data_criacao }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+</body>
+</html>
