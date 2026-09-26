@@ -1,0 +1,6 @@
+Flask==3.0.2
+pandas==2.2.1
+spacy==3.7.4
+https://github.com/explosion/spacy-models/releases/download/pt_core_news_sm-3.7.0/pt_core_news_sm-3.7.0-py3-none-any.whl
+gunicorn==21.2.0
+psycopg2-binary==2.9.9
